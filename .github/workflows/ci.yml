@@ -18,5 +18,9 @@ jobs:
         run: pip install -e .
       - name: guards (tests)
         run: python tests/test_looplab.py
-      - name: demo runs
-        run: python examples/agent_claims.py
+      - name: engine (tests)
+        run: python tests/test_engine.py
+      - name: demos run
+        run: |
+          python examples/agent_claims.py
+          python examples/research_loop_demo.py

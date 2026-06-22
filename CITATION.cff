@@ -3,7 +3,7 @@ title: "looplab: an anti-self-deception harness for AI-accelerated research"
 message: "If you use this harness, please cite it."
 authors:
   - name: "anonymous"
-version: 0.1.0
+version: 0.2.0
 license: Apache-2.0
 keywords:
   - research-methodology

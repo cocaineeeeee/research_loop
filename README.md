@@ -2,13 +2,13 @@
 
 # looplab
 
-> **An LLM will fabricate a result, score itself 95% confident, and move the goalpost when you push back. `looplab` is the brake.**
+> **An LLM will fabricate a result, score itself 95% confident, and move the goalpost when you push back. `looplab` runs the research loop where an external anchor — not the model — decides what survives.**
 
-[![CI](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml/badge.svg)](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml) ![status](https://img.shields.io/badge/status-v0.1-orange) ![python](https://img.shields.io/badge/python-3.9%2B-blue) ![deps](https://img.shields.io/badge/dependencies-none-success) ![license](https://img.shields.io/badge/license-Apache--2.0-green)
+[![CI](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml/badge.svg)](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml) ![status](https://img.shields.io/badge/status-v0.2-orange) ![python](https://img.shields.io/badge/python-3.9%2B-blue) ![deps](https://img.shields.io/badge/core-zero%20deps-success) ![license](https://img.shields.io/badge/license-Apache--2.0-green)
 
-A zero-dependency Python harness that enforces the discipline you *meant* to follow when you let an AI agent loose on research: **freeze your ruler before you look at the data, anchor every claim to something the model can't fake, and never let the model's own confidence decide what is true.**
+An **anchor-first research loop**: generate candidates with *your* model, let an adversary refute them, verify the survivors against an **external, non-fakeable anchor** (a real computation, a solver, a certificate), keep an append-only audit trail, and iterate until the ideas run dry. The discipline you *meant* to follow — freeze the ruler before you look, anchor every claim, never let the model judge itself — enforced in code.
 
-It does not call a model, spawn agents, or need an API key. It does the one thing those tools leave out — it makes it hard to fool yourself.
+Bring your own model (OpenAI / Anthropic / local — your key, never committed). The verification core has zero dependencies. The point of the whole thing: it makes it hard to fool yourself.
 
 ---
 
@@ -37,6 +37,51 @@ Ruler 0da6e59585667225 | screened: 3 | survived: 1 | retired: 2
 ```
 
 The claim the model was **most** confident about (98%) is the one killed hardest. Self-confidence is logged; it never decides. Only an independent external check can certify `SURVIVED`.
+
+---
+
+## The full loop, end to end (bring your own model)
+
+`examples/research_loop_demo.py` runs the whole cycle offline (no key — a stub model
+stands in for the generator) on a toy task with a *real* deterministic anchor:
+
+```text
+Question: find integers below 50 that are prime and congruent to 1 (mod 4)
+Rounds: 4 | survivors: 6 | killed: 6
+
+Survivors (cleared an independent external anchor):
+  + 5   + 13   + 17   + 29   + 37   + 41
+Killed (with reason):
+  - 1   [anchor]     not prime
+  - 8   [adversary]  even number, cannot be an odd prime
+  - 21  [anchor]     not prime
+  ...
+```
+
+The generator proposes, the adversary cheaply filters, and a **real computation**
+decides — and the loop returns the correct answer with an audit trail, not because a
+model said so. Swap the stub for your model and the anchor for your domain's verifier:
+
+```python
+from looplab import ResearchLoop, Anchor, Tier
+from looplab.models import AnthropicModel, OpenAIModel   # bring your own key (env var)
+
+def verify(candidate):                       # YOUR non-fakeable check — the moat
+    score, ok = run_real_computation(candidate)
+    return ok, f"runs/{candidate}.log", "" if ok else "failed the external check"
+
+engine = ResearchLoop(
+    question="propose <X> with property <Y>",
+    model=AnthropicModel(model="claude-sonnet-4-6"),   # generator
+    adversary=OpenAIModel(model="gpt-5.5"),            # a *different* model = independent
+    anchors=[Anchor("verify", Tier.INVARIANT, verify)],
+    max_rounds=4,
+)
+print(engine.run().summary())
+```
+
+The keys are read from `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` (or passed in), held only
+in memory, and **never written to the ledger or anywhere on disk**.
 
 ---
 
