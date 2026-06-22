@@ -4,7 +4,7 @@
 
 > **An LLM will fabricate a result, score itself 95% confident, and move the goalpost when you push back. `looplab` runs the research loop where an external anchor — not the model — decides what survives.**
 
-[![CI](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml/badge.svg)](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml) ![status](https://img.shields.io/badge/status-v0.2-orange) ![python](https://img.shields.io/badge/python-3.9%2B-blue) ![deps](https://img.shields.io/badge/core-zero%20deps-success) ![license](https://img.shields.io/badge/license-Apache--2.0-green)
+[![CI](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml/badge.svg)](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml) ![status](https://img.shields.io/badge/status-v0.3-orange) ![python](https://img.shields.io/badge/python-3.9%2B-blue) ![deps](https://img.shields.io/badge/core-zero%20deps-success) ![license](https://img.shields.io/badge/license-Apache--2.0-green)
 
 An **anchor-first research loop**: generate candidates with *your* model, let an adversary refute them, verify the survivors against an **external, non-fakeable anchor** (a real computation, a solver, a certificate), keep an append-only audit trail, and iterate until the ideas run dry. The discipline you *meant* to follow — freeze the ruler before you look, anchor every claim, never let the model judge itself — enforced in code.
 
