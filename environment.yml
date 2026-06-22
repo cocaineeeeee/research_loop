@@ -1,0 +1,9 @@
+# looplab itself has ZERO runtime dependencies (standard library only).
+# This environment is only for running the test-suite and examples.
+name: looplab
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.9
+  - pip
+  - pytest

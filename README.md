@@ -4,7 +4,7 @@
 
 > **An LLM will fabricate a result, score itself 95% confident, and move the goalpost when you push back. `looplab` is the brake.**
 
-![status](https://img.shields.io/badge/status-v0.1-orange) ![python](https://img.shields.io/badge/python-3.9%2B-blue) ![deps](https://img.shields.io/badge/dependencies-none-success) ![license](https://img.shields.io/badge/license-Apache--2.0-green)
+[![CI](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml/badge.svg)](https://github.com/cocaineeeeee/research_loop/actions/workflows/ci.yml) ![status](https://img.shields.io/badge/status-v0.1-orange) ![python](https://img.shields.io/badge/python-3.9%2B-blue) ![deps](https://img.shields.io/badge/dependencies-none-success) ![license](https://img.shields.io/badge/license-Apache--2.0-green)
 
 A zero-dependency Python harness that enforces the discipline you *meant* to follow when you let an AI agent loose on research: **freeze your ruler before you look at the data, anchor every claim to something the model can't fake, and never let the model's own confidence decide what is true.**
 
