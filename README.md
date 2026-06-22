@@ -85,6 +85,38 @@ in memory, and **never written to the ledger or anywhere on disk**.
 
 ---
 
+## Autonomous mode: it proposes, writes code, runs it, and the *execution* decides
+
+`examples/autonomous_research_loop.py` is the full thing: the model proposes a
+hypothesis **and the code that tests it**, an executor runs that code, and the
+program's output — not the model's confidence — is the verdict.
+
+```bash
+export OPENAI_API_KEY=...
+python examples/autonomous_research_loop.py \
+    --question "Find a closed form for the sum of the first n odd numbers" \
+    --provider openai --rounds 3 --allow-exec
+```
+
+Offline (stub model, safe canned code) it shows the mechanic — note round 2, where the
+model *claims* PASS but the code it wrote prints FAIL, so execution overrules it:
+
+```text
+[round 1] hypothesis: sum of the first n odd numbers equals n^2
+          predicts: 'PASS'      => VERIFIED
+[round 2] hypothesis: sum of the first n odd numbers equals n^2 + 1
+          predicts: 'PASS'      => REJECTED  FAIL          # execution overruled the model
+verified by execution: 1
+  + sum of the first n odd numbers equals n^2
+```
+
+The executors (`looplab/executors/`: `python_runner`, `shell`, `slurm`) are what make
+this *do* research rather than only screen it. **Security:** `--allow-exec` runs
+model-written code in a subprocess — that is **not** a sandbox; use a container/VM for
+real work. Without the flag, the loop only proposes, and is safe to run anywhere.
+
+---
+
 ## The four rules, enforced in code
 
 | Rule | What it means | Why you can't skip it |

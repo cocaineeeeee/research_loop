@@ -117,11 +117,13 @@ class Result:
 
     @property
     def survived(self) -> bool:
-        """SURVIVED requires at least one *independent* anchor to pass.
-        Passing only on SELF (the generator judging itself) is never enough."""
-        independent_pass = [v for v in self.verdicts if v.passed and v.tier.independent]
-        any_fail = any(not v.passed for v in self.verdicts)
-        return bool(independent_pass) and not any_fail
+        """SURVIVED requires at least one *independent* anchor to pass and no
+        independent anchor to fail. SELF verdicts (the generator judging itself)
+        are recorded but never decide — neither to pass nor to reject."""
+        independent = [v for v in self.verdicts if v.tier.independent]
+        independent_pass = [v for v in independent if v.passed]
+        independent_fail = [v for v in independent if not v.passed]
+        return bool(independent_pass) and not independent_fail
 
     @property
     def top_independent_tier(self) -> Tier | None:
@@ -130,11 +132,12 @@ class Result:
 
     @property
     def retired_because(self) -> str:
-        fails = [v for v in self.verdicts if not v.passed]
+        # Only an independent anchor's failure is a reason to retire; SELF never decides.
+        fails = [v for v in self.verdicts if not v.passed and v.tier.independent]
         if fails:
             return f"{fails[0].anchor}: {fails[0].detail}".strip().rstrip(":")
         if not any(v.passed and v.tier.independent for v in self.verdicts):
-            return "passed only on self-judgement — not independently anchored"
+            return "no independent anchor passed — not independently verified"
         return ""
 
 
