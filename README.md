@@ -197,7 +197,7 @@ pip install -e .          # zero dependencies, Python 3.9+
 
 - **v0.1.** The four guards (freeze, anchor-or-reject, self-can't-decide, append-only log) work and are exercised by `examples/`. The API may still move. Not yet on PyPI.
 - Distilled from a real quantum-chemistry pilot whose three manuscripts are **submission-ready, not yet peer-reviewed**. `looplab` is the *process* that produced them, not a claim that the results are blessed.
-- Not a model, not an agent framework, not an API wrapper. A small set of rules in plain Python you wrap around any model.
+- The **core harness** calls no model and needs no API key — a small set of rules in plain Python. The **optional research engine and autonomous demo** call OpenAI/Anthropic only if you supply a key (or run a stub offline).
 
 ## License
 
